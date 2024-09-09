@@ -10,6 +10,7 @@ class User(models.Model):
     Password = models.CharField(max_length=100)
     Type = models.CharField(max_length=20, blank=True, null=True)
     verify = models.BooleanField(default=False)
+    isAdmin = models.BooleanField(default=False)
     
     def __str__(self):
         return self.firstName + " " + self.lastName + " " + str(self.id)

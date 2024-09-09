@@ -66,9 +66,11 @@ class LogIn(APIView):
         email = data.get('Email')
         if User.objects.filter(Email=email, Password=password).exists():
             user = User.objects.get(Email=email, Password=password)
+            json_user = UserSerializer(user)
+            if user.isAdmin == True:
+                return JsonResponse(json_user.data, status=status.HTTP_200_OK)
             if user.verify == False:
                 return JsonResponse({'message':'wait until the admin check your acount'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-            json_user = UserSerializer(user)
             return JsonResponse(json_user.data)
 
         return JsonResponse({'message':'person is not exist'}, status=status.HTTP_400_BAD_REQUEST)
