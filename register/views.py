@@ -45,6 +45,12 @@ class Register(APIView):
         user.Type = Type
         user.save()
         json_user = UserSerializer(user)
+        if Type == "admin":
+            user.isAdmin = True
+            user.save()
+            admin = Admin(user=user)
+            admin.save()
+            return JsonResponse(json_user.data)
         admin = Admin.objects.all().first()
         admin.requests.append(json_user.data)
         admin.save()
