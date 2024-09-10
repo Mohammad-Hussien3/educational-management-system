@@ -28,4 +28,5 @@ class Student(models.Model):
     
 
 class Admin(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, unique=True)
     requests = models.JSONField(default=list, blank=True)
