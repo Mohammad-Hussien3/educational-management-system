@@ -5,7 +5,6 @@ from rest_framework.views import APIView
 from .serializer import CourseSerializer
 import json
 from register.models import Student, Doctor
-from exam.models import Exam
 from exam.serializer import ExamSerializer
 
 # Create your views here.
@@ -18,6 +17,15 @@ class GetMyCourses(APIView):
 
     def get(self, request, id):
         json_courses = []
+        if Student.objects.filter(user__id=id):
+            student = Student.objects.get(user__id=id)
+            for course in student.courses.all():
+                json_courses.append(CourseSerializer(course).data)
+            return JsonResponse(json_courses, safe=False, status=status.HTTP_200_OK)
+
+        doctor = Doctor.objects.get(user__id=id)
+        for course in doctor.courses.all():
+            json_courses.append(CourseSerializer(course).data)
         return JsonResponse(json_courses, safe=False, status=status.HTTP_200_OK)
 
 

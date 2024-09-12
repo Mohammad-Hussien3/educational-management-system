@@ -4,6 +4,6 @@ from register.models import Doctor, Student
 
 class Course(models.Model):
     courseName = models.CharField(max_length=60)
-    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='courses')
     registeredStudents = models.ManyToManyField(Student, related_name='courses', blank=True)
     contents = models.JSONField(default=list, blank=True)
