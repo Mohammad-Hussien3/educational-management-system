@@ -4,7 +4,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .serializer import CourseSerializer
 import json
-from register.models import Doctor
+from register.models import Student, Doctor
+from exam.models import Exam
+from exam.serializer import ExamSerializer
 
 # Create your views here.
 
@@ -12,31 +14,26 @@ def check_keys(expected_keys, received_keys):
     return received_keys == expected_keys
 
 
-class GetAllCourses(APIView):
-
-    def get(self, request, pk):
-        courses = Course.objects.all()
-        myCourses = []
-        doctor = Doctor.objects.get(user__id=pk)
-        myCourses = [course for course in doctor.courses.all()]
-        newCourses = [{'id':CourseSerializer(course).data['id'], 'courseName':CourseSerializer(course).data['courseName']}
-                       for course in courses if myCourses.count(course) == 0]
-            
-        return JsonResponse(newCourses, safe=False, status=status.HTTP_200_OK)
-    
-
 class GetMyCourses(APIView):
 
-    def get(self, request, pk):
-        doctor = Doctor.objects.get(user__id=pk)
-        json_courses = [{'id':CourseSerializer(course).data['id'], 'courseName':CourseSerializer(course).data['courseName']}
-                        for course in doctor.courses.all()]
+    def get(self, request, id):
+        json_courses = []
         return JsonResponse(json_courses, safe=False, status=status.HTTP_200_OK)
 
 
 class AddCourse(APIView):
 
-    expected_keys = {'courseId'}
+    def post(self, request, studentId, courseId):
+        student = Student.objects.get(user__id=studentId)
+        course = Course.objects.get(id=courseId)
+        course.registeredStudents.add(student)
+        course.save()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+    
+
+class CreateCourse(APIView):
+
+    expected_keys = {'courseName'}
 
     def post(self, request, doctorId):
         data = json.loads(request.body.decode('utf-8'))
@@ -46,7 +43,53 @@ class AddCourse(APIView):
                 {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        courseId = data.get('courseId')
         doctor = Doctor.objects.get(user__id=doctorId)
-        doctor.courses.add(Course.objects.get(id=courseId))
-        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+        courseName = data.get('courseName')
+        newCourse = Course(doctor=doctor, courseName=courseName)
+        newCourse.save()
+        jsonNewCourse = CourseSerializer(newCourse)
+        return JsonResponse(jsonNewCourse.data, status=status.HTTP_200_OK)
+    
+
+class AddExam(APIView):
+
+    expected_keys = {'doctorId', 'questions', 'degrees', 'answers'}
+
+    def put(self, request, courseId):
+        data = json.loads(request.body.decode('utf-8'))
+        received_keys = set(data.keys())
+        if not check_keys(self.expected_keys, received_keys):
+            return JsonResponse(
+                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        newExam = ExamSerializer(data=data)
+        if newExam.is_valid():
+            newExam.save()
+            course = Course.objects.get(id=courseId)
+            course.contents.append(newExam.data)
+            course.save()
+            jsonCourse = CourseSerializer(course)
+            return JsonResponse(jsonCourse.data, status=status.HTTP_200_OK)
+        
+        return JsonResponse({'error':newExam.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+
+class AddSession(APIView):
+
+    expected_keys = {'session'}
+
+    def put(self, request, courseId):
+        data = json.loads(request.body.decode('utf-8'))
+        received_keys = set(data.keys())
+        if not check_keys(self.expected_keys, received_keys):
+            return JsonResponse(
+                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        session = data.get('session')
+        course = Course.objects.get(id=courseId)
+        course.contents.append(session)
+        course.save()
+        jsonCourse = CourseSerializer(course)
+        return JsonResponse(jsonCourse.data, status=status.HTTP_200_OK)

@@ -1,6 +1,4 @@
 from django.db import models
-from exam.models import Exam
-from course.models import Course
 # Create your models here.
 
 class User(models.Model):
@@ -18,7 +16,6 @@ class User(models.Model):
 
 class Doctor(models.Model): 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, unique=True)
-    courses = models.ManyToManyField(Course, related_name='doctors')
     degrees = models.JSONField(default=list, blank=True)
 
     

@@ -2,7 +2,9 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('getallcourses/<int:pk>/', views.GetAllCourses.as_view()),
     path('getmycourses/<int:pk>/', views.GetMyCourses.as_view()),
-    path('addcourse/<int:doctorId>/', views.AddCourse.as_view()),
+    path('addcourse/<int:studentId>/<int:courseId>/', views.AddCourse.as_view()),
+    path('createcourse/<int:doctorId>/', views.CreateCourse.as_view()),
+    path('addexam/<int:courseId>/', views.AddExam.as_view()),
+    path('addsession/<int:courseId>/', views.AddSession.as_view()),
 ]
