@@ -75,7 +75,7 @@ class AddExam(APIView):
         return JsonResponse({'error':newExam.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 
-class AddSession(APIView):
+class AddLecture(APIView):
 
     expected_keys = {'session'}
 
