@@ -85,7 +85,7 @@ class AddExam(APIView):
 
 class AddLecture(APIView):
 
-    expected_keys = {'session'}
+    expected_keys = {'lecture'}
 
     def put(self, request, courseId):
         data = json.loads(request.body.decode('utf-8'))
@@ -95,7 +95,7 @@ class AddLecture(APIView):
                 {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        session = data.get('session')
+        session = data.get('lecture')
         course = Course.objects.get(id=courseId)
         course.contents.append(session)
         course.save()
