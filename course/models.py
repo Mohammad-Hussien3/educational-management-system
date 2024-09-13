@@ -7,3 +7,4 @@ class Course(models.Model):
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='courses')
     registeredStudents = models.ManyToManyField(Student, related_name='courses', blank=True)
     contents = models.JSONField(default=list, blank=True)
+    latestPage = models.JSONField(default=list, blank=True)

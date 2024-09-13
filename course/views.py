@@ -75,7 +75,7 @@ class AddExam(APIView):
         if newExam.is_valid():
             newExam.save()
             course = Course.objects.get(id=courseId)
-            course.contents.append(newExam.data)
+            course.contents.append([{'isExam':True}, newExam.data])
             course.save()
             jsonCourse = CourseSerializer(course)
             return JsonResponse(jsonCourse.data, status=status.HTTP_200_OK)
@@ -97,7 +97,22 @@ class AddLecture(APIView):
             )
         session = data.get('lecture')
         course = Course.objects.get(id=courseId)
-        course.contents.append(session)
+        course.contents.append([{'isExam':False}, session])
         course.save()
         jsonCourse = CourseSerializer(course)
         return JsonResponse(jsonCourse.data, status=status.HTTP_200_OK)
+    
+
+class GetPage(APIView):
+
+    def get(self, request, courseId, studentId):
+        course = Course.objects.get(id=courseId)
+        pageNumber = course.latestPage[0][str(studentId)]
+        jsonData = course.contents[pageNumber].copy()
+        jsonData.append(pageNumber)
+        print(jsonData)
+        print(course.contents[pageNumber])
+        return JsonResponse(jsonData, safe=False, status=status.HTTP_200_OK)
+
+
+        
