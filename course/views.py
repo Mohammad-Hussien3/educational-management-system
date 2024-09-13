@@ -110,8 +110,6 @@ class GetPage(APIView):
         pageNumber = course.latestPage[0][str(studentId)]
         jsonData = course.contents[pageNumber].copy()
         jsonData.append(pageNumber)
-        print(jsonData)
-        print(course.contents[pageNumber])
         return JsonResponse(jsonData, safe=False, status=status.HTTP_200_OK)
 
 
