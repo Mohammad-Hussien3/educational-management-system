@@ -7,5 +7,5 @@ urlpatterns = [
     path('createcourse/<int:doctorId>/', views.CreateCourse.as_view()),
     path('addexam/<int:courseId>/', views.AddExam.as_view()),
     path('addlecture/<int:courseId>/', views.AddLecture.as_view()),
-    path('getpage/<int:courseId>/<int:studentId>/', views.GetPage.as_view()),
+    path('getpage/<int:courseId>/<int:studentId>/<int:pageIndex>/', views.GetPage.as_view()),
 ]

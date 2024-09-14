@@ -97,7 +97,7 @@ class AddLecture(APIView):
             )
         session = data.get('lecture')
         course = Course.objects.get(id=courseId)
-        course.contents.append([{'isExam':False}, session])
+        course.contents.append([{'isExam':False}, {'lecture':session}])
         course.save()
         jsonCourse = CourseSerializer(course)
         return JsonResponse(jsonCourse.data, status=status.HTTP_200_OK)
@@ -105,11 +105,22 @@ class AddLecture(APIView):
 
 class GetPage(APIView):
 
-    def get(self, request, courseId, studentId):
+    def get(self, request, courseId, studentId, pageIndex):
         course = Course.objects.get(id=courseId)
         pageNumber = course.latestPage[0][str(studentId)]
-        jsonData = course.contents[pageNumber].copy()
-        jsonData.append(pageNumber)
+        if pageIndex > len(course.contents):
+            return JsonResponse({'message' : 'you finished the course'}, status=status.HTTP_200_OK)
+        elif pageIndex > pageNumber:
+            pageNumber = pageIndex
+            course.latestPage[0][str(studentId)] = pageNumber
+            course.save()
+        elif pageIndex != 0:
+            pageNumber = pageIndex
+        jsonData = course.contents[pageNumber - 1].copy()
+        jsonData[0]['pageIndex'] = pageNumber
+        jsonData[0]['id'] = course.id
+        jsonData[0]['courseName'] = course.courseName
+        print(jsonData)
         return JsonResponse(jsonData, safe=False, status=status.HTTP_200_OK)
 
 
