@@ -128,8 +128,6 @@ class GetCourses(APIView):
         jsonCourses = []
         myCourse = Student.objects.get(user__id=studentId).courses.all()
         myCourse = [course.id for course in myCourse]
-        print(myCourse)
-        print(allCourses)
         for course in allCourses:
             if not course.id in myCourse:
                 jsonCourses.append(CourseSerializer(course).data)
