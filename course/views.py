@@ -139,7 +139,7 @@ class CourseRegister(APIView):
     def put(self, request, courseId, studentId):
         doctor = Course.objects.get(id=courseId).doctor
         student = Student.objects.get(user__id=studentId)
-        doctor.courseRequest.append({'courseId':courseId, 'studentId':studentId, 'firstName':student.firstName, 'lastName':student.lastName})
+        doctor.courseRequest.append({'courseId':courseId, 'studentId':studentId, 'firstName':student.user.firstName, 'lastName':student.user.lastName})
         doctor.save()
         return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
 
@@ -157,7 +157,7 @@ class AcceptRegisterRequest(APIView):
         course = Course.objects.get(id=courseId)
         doctor = course.doctor
         student = Student.objects.get(user__id=studentId)
-        doctor.courseRequest.remove({'courseId':courseId, 'studentId':studentId, 'firstName':student.firstName, 'lastName':student.lastName})
+        doctor.courseRequest.remove({'courseId':courseId, 'studentId':studentId, 'firstName':student.user.firstName, 'lastName':student.user.lastName})
         doctor.save()
         course.registeredStudents.add(Student.objects.get(user__id=studentId))
         course.latestPage[0][str(studentId)] = 1
