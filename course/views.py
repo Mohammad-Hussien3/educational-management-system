@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from .serializer import CourseSerializer
 import json
 from register.models import Student, Doctor
+from register.serializer import UserSerializer
 from exam.serializer import ExamSerializer
 
 # Create your views here.
@@ -164,3 +165,11 @@ class AcceptRegisterRequest(APIView):
         course.latestPage[0][str(studentId)] = 1
         course.save()
         return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+    
+
+class GetStudentsInCourse(APIView):
+    
+    def get(self, request, courseId):
+        allStudents = Course.objects.get(id=courseId).registeredStudents.all()
+        jsonStudents = [UserSerializer(student.user) for student in allStudents]
+        return JsonResponse(jsonStudents, safe=False, status=status.HTTP_200_OK)

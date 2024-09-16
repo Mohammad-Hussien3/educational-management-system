@@ -12,4 +12,5 @@ urlpatterns = [
     path('courseregister/<int:courseId>/<int:studentId>/', views.CourseRegister.as_view()),
     path('getallregisterrequests/<int:doctorId>/', views.GetAllRegisterRequests.as_view()),
     path('acceptregisterrequest/<int:courseId>/<int:studentId>/', views.AcceptRegisterRequest.as_view()),
+    path('getstudentsincourse/<int:courseId>/', views.GetStudentsInCourse.as_view()),
 ]
