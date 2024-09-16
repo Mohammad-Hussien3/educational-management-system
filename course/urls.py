@@ -9,4 +9,7 @@ urlpatterns = [
     path('addlecture/<int:courseId>/', views.AddLecture.as_view()),
     path('getpage/<int:courseId>/<int:studentId>/<int:pageIndex>/', views.GetPage.as_view()),
     path('getcourses/<int:studentId>/', views.GetCourses.as_view()),
+    path('courseregister/<int:courseId>/<int:studentId>/', views.CourseRegister.as_view()),
+    path('getallregisterrequests/<int:doctorId>/', views.GetAllRegisterRequests.as_view()),
+    path('acceptregisterrequest/<int:courseId>/<int:studentId>/', views.AcceptRegisterRequest.as_view()),
 ]

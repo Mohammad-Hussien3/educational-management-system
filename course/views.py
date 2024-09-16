@@ -136,3 +136,32 @@ class GetCourses(APIView):
             if not course.id in myCourse:
                 jsonCourses.append(CourseSerializer(course).data)
         return JsonResponse(jsonCourses, safe=False, status=status.HTTP_200_OK)
+    
+
+class CourseRegister(APIView):
+
+    def put(self, request, courseId, studentId):
+        doctor = Course.objects.get(id=courseId).doctor
+        doctor.courseRequest.append({'courseId':courseId, 'studentId':studentId})
+        doctor.save()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+
+
+class GetAllRegisterRequests(APIView):
+
+    def get(self, requests, doctorId):
+        jsonRequests = Doctor.objects.get(user__id=doctorId).courseRequest
+        return JsonResponse(jsonRequests, safe=False, status=status.HTTP_200_OK)
+    
+
+class AcceptRegisterRequest(APIView):
+
+    def put(self, request, courseId, studentId):
+        course = Course.objects.get(id=courseId)
+        doctor = course.doctor
+        doctor.courseRequest.remove({'courseId':courseId, 'studentId':studentId})
+        doctor.save()
+        course.registeredStudents.add(Student.objects.get(user__id=studentId))
+        course.latestPage[0][str(studentId)] = 1
+        course.save()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)

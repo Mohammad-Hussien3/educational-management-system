@@ -17,6 +17,7 @@ class User(models.Model):
 class Doctor(models.Model): 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, unique=True)
     degrees = models.JSONField(default=list, blank=True)
+    courseRequest = models.JSONField(default=list, blank=True)
 
     
 class Student(models.Model):
