@@ -121,6 +121,3 @@ class GetPage(APIView):
         jsonData[0]['id'] = course.id
         jsonData[0]['courseName'] = course.courseName
         return JsonResponse(jsonData, safe=False, status=status.HTTP_200_OK)
-
-
-        
