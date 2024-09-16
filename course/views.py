@@ -156,7 +156,8 @@ class AcceptRegisterRequest(APIView):
     def put(self, request, courseId, studentId):
         course = Course.objects.get(id=courseId)
         doctor = course.doctor
-        doctor.courseRequest.remove({'courseId':courseId, 'studentId':studentId})
+        student = Student.objects.get(user__id=studentId)
+        doctor.courseRequest.remove({'courseId':courseId, 'studentId':studentId, 'firstName':student.firstName, 'lastName':student.lastName})
         doctor.save()
         course.registeredStudents.add(Student.objects.get(user__id=studentId))
         course.latestPage[0][str(studentId)] = 1
