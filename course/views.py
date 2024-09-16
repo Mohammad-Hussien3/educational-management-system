@@ -121,3 +121,18 @@ class GetPage(APIView):
         jsonData[0]['id'] = course.id
         jsonData[0]['courseName'] = course.courseName
         return JsonResponse(jsonData, safe=False, status=status.HTTP_200_OK)
+    
+
+class GetCourses(APIView):
+    
+    def get(self, request, studentId):
+        allCourses = Course.objects.all()
+        jsonCourses = []
+        myCourse = Student.objects.get(user__id=studentId).courses.all()
+        myCourse = [course.id for course in myCourse]
+        print(myCourse)
+        print(allCourses)
+        for course in allCourses:
+            if not course.id in myCourse:
+                jsonCourses.append(CourseSerializer(course).data)
+        return JsonResponse(jsonCourses, safe=False, status=status.HTTP_200_OK)
