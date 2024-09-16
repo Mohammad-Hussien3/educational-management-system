@@ -13,6 +13,13 @@ def check_keys(expected_keys, received_keys):
     return received_keys == expected_keys
 
 
+def error_keys(expected_keys, received_keys):
+    return JsonResponse(
+                {'error': 'Invalid keys in the request data.', 'expected': list(expected_keys), 'received': list(received_keys)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
 class GetMyCourses(APIView):
 
     def get(self, request, id):
@@ -47,10 +54,7 @@ class CreateCourse(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            error_keys(self.expected_keys, received_keys)
         doctor = Doctor.objects.get(user__id=doctorId)
         courseName = data.get('courseName')
         newCourse = Course(doctor=doctor, courseName=courseName)
@@ -67,10 +71,7 @@ class AddExam(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            error_keys(self.expected_keys, received_keys)
         newExam = ExamSerializer(data=data)
         if newExam.is_valid():
             newExam.save()
@@ -91,10 +92,7 @@ class AddLecture(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            error_keys(self.expected_keys, received_keys)
         session = data.get('lecture')
         course = Course.objects.get(id=courseId)
         course.contents.append([{'isExam':False}, {'lecture':session}])

@@ -12,6 +12,13 @@ def check_keys(expected_keys, received_keys):
     return received_keys == expected_keys
 
 
+def error_keys(expected_keys, received_keys):
+    return JsonResponse(
+                {'error': 'Invalid keys in the request data.', 'expected': list(expected_keys), 'received': list(received_keys)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
 class GetArticles(APIView):
 
     def get(self, request):
@@ -28,11 +35,7 @@ class AddArticle(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+            error_keys(self.expected_keys, received_keys)
         new_article = ArticleSerializer(data=data)
         if new_article.is_valid():
             new_article.save()

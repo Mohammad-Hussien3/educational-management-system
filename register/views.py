@@ -11,6 +11,13 @@ def check_keys(expected_keys, received_keys):
     return received_keys == expected_keys
     
 
+def error_keys(expected_keys, received_keys):
+    return JsonResponse(
+                {'error': 'Invalid keys in the request data.', 'expected': list(expected_keys), 'received': list(received_keys)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
 class Register(APIView):
 
     expected_keys_post = {'firstName', 'lastName', 'Email', 'Password'}
@@ -20,10 +27,7 @@ class Register(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys_post, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys_post), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            error_keys(self.expected_keys_post, received_keys)
         new_user = UserSerializer(data=data)
         if new_user.is_valid():
             new_user.save()
@@ -35,10 +39,7 @@ class Register(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys_put, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys_put), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            error_keys(self.expected_keys_put, received_keys)
         Type = data.get('Type')
         Id = data.get('id')
         user = User.objects.get(id=Id)
@@ -64,10 +65,7 @@ class LogIn(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            error_keys(self.expected_keys, received_keys)
         password = data.get('Password')
         email = data.get('Email')
         if User.objects.filter(Email=email, Password=password).exists():

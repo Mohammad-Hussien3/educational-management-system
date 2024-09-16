@@ -10,6 +10,13 @@ from register.models import Doctor, Student
 
 def check_keys(expected_keys, received_keys):
     return received_keys == expected_keys
+
+
+def error_keys(expected_keys, received_keys):
+    return JsonResponse(
+                {'error': 'Invalid keys in the request data.', 'expected': list(expected_keys), 'received': list(received_keys)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     
 
 class SolveExam(APIView):
@@ -20,10 +27,8 @@ class SolveExam(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            error_keys(self.expected_keys, received_keys)
+
         exam = Exam.objects.get(id=pk)
         doctorId = exam.doctorId
         studentId = data['studentId']
@@ -53,10 +58,7 @@ class CorrectExam(APIView):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys, received_keys):
-            return JsonResponse(
-                {'error': 'Invalid keys in the request data.', 'expected': list(self.expected_keys), 'received': list(received_keys)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            error_keys(self.expected_keys, received_keys)
         doctorId = data['doctorId']
         examId = data['examId']
         studentID = data['studentId']
