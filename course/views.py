@@ -138,7 +138,8 @@ class CourseRegister(APIView):
 
     def put(self, request, courseId, studentId):
         doctor = Course.objects.get(id=courseId).doctor
-        doctor.courseRequest.append({'courseId':courseId, 'studentId':studentId})
+        student = Student.objects.get(user__id=studentId)
+        doctor.courseRequest.append({'courseId':courseId, 'studentId':studentId, 'firstName':student.firstName, 'lastName':student.lastName})
         doctor.save()
         return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
 
