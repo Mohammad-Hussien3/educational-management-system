@@ -109,7 +109,7 @@ class GetPage(APIView):
         course = Course.objects.get(id=courseId)
         pageNumber = course.latestPage[0][str(studentId)]
         if pageIndex > len(course.contents):
-            return JsonResponse({'message' : 'you finished the course'}, status=status.HTTP_200_OK)
+            return JsonResponse([{'isExam':False}, {'lecture':'finish'}], status=status.HTTP_200_OK)
         elif pageIndex > pageNumber:
             pageNumber = pageIndex
             course.latestPage[0][str(studentId)] = pageNumber
