@@ -171,5 +171,5 @@ class GetStudentsInCourse(APIView):
     
     def get(self, request, courseId):
         allStudents = Course.objects.get(id=courseId).registeredStudents.all()
-        jsonStudents = [UserSerializer(student.user) for student in allStudents]
+        jsonStudents = [UserSerializer(student.user).data for student in allStudents]
         return JsonResponse(jsonStudents, safe=False, status=status.HTTP_200_OK)
