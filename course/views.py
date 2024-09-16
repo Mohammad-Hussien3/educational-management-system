@@ -58,6 +58,7 @@ class CreateCourse(APIView):
         doctor = Doctor.objects.get(user__id=doctorId)
         courseName = data.get('courseName')
         newCourse = Course(doctor=doctor, courseName=courseName)
+        newCourse.latestPage.append(dict())
         newCourse.save()
         jsonNewCourse = CourseSerializer(newCourse)
         return JsonResponse(jsonNewCourse.data, status=status.HTTP_200_OK)
@@ -159,7 +160,7 @@ class AcceptRegisterRequest(APIView):
         student = Student.objects.get(user__id=studentId)
         doctor.courseRequest.remove({'courseId':courseId, 'studentId':studentId, 'firstName':student.user.firstName, 'lastName':student.user.lastName})
         doctor.save()
-        course.registeredStudents.add(Student.objects.get(user__id=studentId))
+        course.registeredStudents.add(student)
         course.latestPage[0][str(studentId)] = 1
         course.save()
         return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
