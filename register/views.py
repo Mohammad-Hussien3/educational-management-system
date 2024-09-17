@@ -172,3 +172,11 @@ class EditPassword(APIView):
         user.Password = password
         user.save()
         return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+    
+
+class LogOut(APIView):
+
+    def delete(self, request, id):
+        user = User.objects.get(id=id)
+        user.delete()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
