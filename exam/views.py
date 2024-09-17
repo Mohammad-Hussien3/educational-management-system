@@ -5,6 +5,7 @@ from .models import Exam
 from .serializer import ExamSerializer
 import json
 from register.models import Doctor, Student
+from course.models import Course
 
 # Create your views here.
 
@@ -23,13 +24,13 @@ class SolveExam(APIView):
     
     expected_keys = {'studentId', 'answers'}
 
-    def post(self, request, pk):
+    def post(self, request, courseId, examId):
         data = json.loads(request.body.decode('utf-8'))
         received_keys = set(data.keys())
         if not check_keys(self.expected_keys, received_keys):
             error_keys(self.expected_keys, received_keys)
 
-        exam = Exam.objects.get(id=pk)
+        exam = Exam.objects.get(id=examId)
         doctorId = exam.doctorId
         studentId = data['studentId']
 
@@ -38,7 +39,7 @@ class SolveExam(APIView):
             if exam.answers[i] == data['answers'][i]:
                 result += exam.degrees[i]
         doctor = Doctor.objects.get(user__id=doctorId)
-        doctor.degrees.append({'studentId':studentId, 'examId':pk, 'result':result})
+        doctor.degrees.append({'studentId':studentId, 'examId':examId, 'result':result, 'courseName':Course.objects.get(id=courseId).courseName})
         doctor.save()
         return JsonResponse({'success':'success'}, status=status.HTTP_200_OK)
 
@@ -68,8 +69,9 @@ class CorrectExam(APIView):
         for element in doctor.degrees:
             studentId = element['studentId']
             result = element['result']
+            courseName = element['courseName']
             if studentId == studentID:
-                student.degrees.append({'examId':examId, 'studentId':studentId, 'result':result})
+                student.degrees.append({'examId':examId, 'studentId':studentId, 'result':result, 'courseName':courseName})
                 student.save()
                 doctor.degrees.pop(idx)
                 doctor.save()
