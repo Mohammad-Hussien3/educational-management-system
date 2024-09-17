@@ -137,7 +137,7 @@ class EditFirstName(APIView):
         firstName = data.get('firstName')
         user.firstName = firstName
         user.save()
-        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+        return JsonResponse(UserSerializer(user).data, status=status.HTTP_200_OK)
     
 
 class EditLastName(APIView):
@@ -154,7 +154,7 @@ class EditLastName(APIView):
         user = User.objects.get(id=id)
         user.lastName = lastName
         user.save()
-        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+        return JsonResponse(UserSerializer(user).data, status=status.HTTP_200_OK)
     
 
 class EditPassword(APIView):
@@ -171,7 +171,7 @@ class EditPassword(APIView):
         user = User.objects.get(id=id)
         user.Password = password
         user.save()
-        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+        return JsonResponse(UserSerializer(user).data, status=status.HTTP_200_OK)
     
 
 class LogOut(APIView):
