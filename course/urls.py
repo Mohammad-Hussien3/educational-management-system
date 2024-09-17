@@ -13,5 +13,6 @@ urlpatterns = [
     path('getallregisterrequests/<int:doctorId>/', views.GetAllRegisterRequests.as_view()),
     path('acceptregisterrequest/<int:courseId>/<int:studentId>/', views.AcceptRegisterRequest.as_view()),
     path('getstudentsincourse/<int:courseId>/', views.GetStudentsInCourse.as_view()),
-    path('deletecourse/<int:courseId>/<int:studentId>/', views.DeleteCourse.as_view()),
+    path('deletestudentfromcourse/<int:courseId>/<int:studentId>/', views.DeleteCourse.as_view()),
+    path('deletecourse/<int:courseId>/', views.DeleteCourse.as_view()),
 ]
