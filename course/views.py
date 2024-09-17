@@ -173,3 +173,13 @@ class GetStudentsInCourse(APIView):
         allStudents = Course.objects.get(id=courseId).registeredStudents.all()
         jsonStudents = [UserSerializer(student.user).data for student in allStudents]
         return JsonResponse(jsonStudents, safe=False, status=status.HTTP_200_OK)
+    
+
+class DeleteCourse(APIView):
+
+    def delete(self, request, courseId, studentId):
+        course = Course.objects.get(id=courseId)
+        student = Student.objects.get(user__id=studentId)
+        course.registeredStudents.remove(student)
+        course.save()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)   
