@@ -115,3 +115,60 @@ class GetAllUsers(APIView):
         users = User.objects.all()
         json_users = [UserSerializer(user).data for user in users if user.verify == True]
         return JsonResponse(json_users, safe=False, status=status.HTTP_200_OK)
+    
+
+class GetProfile(APIView):
+    
+    def get(self, request, id):
+        user = User.objects.get(id=id)
+        return JsonResponse(UserSerializer(user).data, status=status.HTTP_200_OK)
+
+class EditFirstName(APIView):
+
+    expected_keys = {'firstName'}
+
+    def put(self, request, id):
+        data = json.loads(request.body.decode('utf-8'))
+        received_keys = set(data.keys())
+        if not check_keys(self.expected_keys, received_keys):
+            error_keys(self.expected_keys, received_keys)
+
+        user = User.objects.get(id=id)
+        firstName = data.get('firstName')
+        user.firstName = firstName
+        user.save()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+    
+
+class EditLastName(APIView):
+
+    expected_keys = {'lastName'}
+
+    def put(self, request, id):
+        data = json.loads(request.body.decode('utf-8'))
+        received_keys = set(data.keys())
+        if not check_keys(self.expected_keys, received_keys):
+            error_keys(self.expected_keys, received_keys)
+        
+        lastName = data.get('lastName')
+        user = User.objects.get(id=id)
+        user.lastName = lastName
+        user.save()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
+    
+
+class EditPassword(APIView):
+
+    expected_keys = {'Password'}
+
+    def put(self, request, id):
+        data = json.loads(request.body.decode('utf-8'))
+        received_keys = set(data.keys())
+        if not check_keys(self.expected_keys, received_keys):
+            error_keys(self.expected_keys, received_keys)
+
+        password = data.get('Password')
+        user = User.objects.get(id=id)
+        user.Password = password
+        user.save()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)
