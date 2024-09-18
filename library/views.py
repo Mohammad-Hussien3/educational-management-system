@@ -45,3 +45,10 @@ class AddArticle(APIView):
         data['name'] = doctor.firstName + ' ' + doctor.lastName
         data['email'] = doctor.Email
         return JsonResponse(data, status=status.HTTP_200_OK)
+    
+class DeleteArticle(APIView):
+
+    def delete(self, request, articleId):
+        article = Article.objects.get(id=articleId)
+        article.delete()
+        return JsonResponse({'message':'success'}, status=status.HTTP_200_OK)

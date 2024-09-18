@@ -108,9 +108,7 @@ class GetPage(APIView):
     def get(self, request, courseId, studentId, pageIndex):
         course = Course.objects.get(id=courseId)
         pageNumber = course.latestPage[0][str(studentId)]
-        if pageIndex > len(course.contents):
-            return JsonResponse([{'isExam':False}, {'lecture':'finish'}], status=status.HTTP_200_OK)
-        elif pageIndex > pageNumber:
+        if pageIndex > pageNumber:
             pageNumber = pageIndex
             course.latestPage[0][str(studentId)] = pageNumber
             course.save()
@@ -120,6 +118,7 @@ class GetPage(APIView):
         jsonData[0]['pageIndex'] = pageNumber
         jsonData[0]['id'] = course.id
         jsonData[0]['courseName'] = course.courseName
+        jsonData[0]['pageNumbers'] = len(course.contents)
         return JsonResponse(jsonData, safe=False, status=status.HTTP_200_OK)
     
 
