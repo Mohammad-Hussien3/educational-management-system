@@ -1,0 +1,9 @@
+course/__pycache__/
+course/migrations/__pycache__/
+eduproject/__pycache__/
+exam/__pycache__/
+exam/migrations/__pycache__/
+library/__pycache__/
+library/migrations/__pycache__/
+register/__pycache__/
+register/migrations/__pycache__/
